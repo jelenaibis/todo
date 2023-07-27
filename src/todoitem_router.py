@@ -12,7 +12,7 @@ def get_all_todoitems(todoitem_service=Depends(get_todoitem_service)):
     return todoitem_service.get_all_todoitems()
 
 
-@router.post("/create/", response_model=TodoItem)
+@router.post("/create", response_model=TodoItem)
 async def create_todoitem(todoitem: BaseTodoItem, todoitem_service=Depends(get_todoitem_service)):
     return todoitem_service.create_todoitem(todoitem)
 

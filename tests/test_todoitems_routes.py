@@ -1,41 +1,46 @@
-from tests.test_main import client
+from tests.conftest import client
+from unittest.mock import patch
+from src.schemas import TodoItem
+
+
+def fake_todo_items_list():
+    new_data1 = {"id": 1, "name": "fastapi", "description": "Fastapi education"}
+    new_data2 = {"id": 2, "name": "django", "description": "Django education"}
+    todo_item_1 = TodoItem(**new_data1)
+    todo_item_2 = TodoItem(**new_data2)
+    return [todo_item_1, todo_item_2]
 
 
 def test_get_all_empty_list():
-    response = client.get("/todoitems/")
+    response = client.get("/todoitems")
     assert response.status_code == 200
     assert response.json() == []
 
 
-def test_get_all_todoitems():
-    new_todoitem1 = {"name": "fastapi", "description": "Fastapi education"}
-    client.post(
-        "/todoitems/create/",
-        json=new_todoitem1
-    )
-
-    new_todoitem2 = {"name": "django", "description": "Django education"}
-    client.post(
-        "/todoitems/create/",
-        json=new_todoitem2
-    )
-    response = client.get("/todoitems/")
+@patch("src.todoitem_service.TODOService.get_all_todoitems",
+       return_value=fake_todo_items_list())
+def test_get_all_todoitems(mocked):
+    response = client.get("/todoitems")
     assert response.status_code == 200
-    assert len(response.json()) != 0
     assert isinstance(response.json(), list)
+    assert len(response.json()) != 0
+    assert response.json() == [
+        {"id": 1, "name": "fastapi", "description": "Fastapi education"},
+        {"id": 2, "name": "django", "description": "Django education"}
+    ]
 
 
 def test_create_todoitem_success():
     data = {"name": "fastapi", "description": "Fastapi education"}
     response = client.post(
-        "/todoitems/create/",
+        "/todoitems/create",
         json=data
     )
     assert response.status_code == 200
     toditem = client.get("/todoitems/1")
     assert toditem.status_code == 200
     assert response.json() == {
-        "id": 3,
+        "id": 1,
         "name": "fastapi",
         "description": "Fastapi education"
     }
@@ -44,7 +49,7 @@ def test_create_todoitem_success():
 def test_create_todoitem_invalid_payload():
     data = {"description": "Description example"}
     response = client.post(
-        "/todoitems/create/",
+        "/todoitems/create",
         json=data
     )
     assert response.status_code == 422

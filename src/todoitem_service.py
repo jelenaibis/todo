@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from src.schemas import TodoItem, UpdateTodoItem, BaseTodoItem, Message
 from fastapi import status, HTTPException
-from random import randint
 
 todoitem_list = []
+
 
 
 class ITODOItemsService(ABC):
@@ -30,7 +30,9 @@ class ITODOItemsService(ABC):
 
 
 class TODOService(ITODOItemsService):
-
+    # todoitem_list\
+    #     = get_todo_item_list()
+    #
     def get_all_todoitems(self) -> list[TodoItem]:
         return todoitem_list
 
