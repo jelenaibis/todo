@@ -1,16 +1,20 @@
 from pydantic import BaseModel
 
 
-class BaseTODOItem(BaseModel):
+class Message(BaseModel):
+    message: str
+
+
+class BaseTodoItem(BaseModel):
     name: str
     description: str | None = None
 
 
-class UpdateTODOItem(BaseModel):
+class UpdateTodoItem(BaseModel):
     name: str | None = None
     description: str | None = None
 
 
-class TODOItem(BaseTODOItem):
+class TodoItem(BaseTodoItem):
     id: int
 
